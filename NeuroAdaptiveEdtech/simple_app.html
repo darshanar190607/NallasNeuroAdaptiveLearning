@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAdaptive EdTech - Complete Application</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #000; color: white; }
+        
+        .app-container { min-height: 100vh; position: relative; overflow: hidden; }
+        
+        .floating-orb {
+            position: absolute; border-radius: 50%; filter: blur(40px);
+            animation: float 6s ease-in-out infinite; z-index: 0;
+        }
+        .orb-1 { width: 200px; height: 200px; background: linear-gradient(45deg, #ff006e, #8338ec); top: 10%; left: 10%; }
+        .orb-2 { width: 150px; height: 150px; background: linear-gradient(45deg, #3a86ff, #06ffa5); top: 60%; right: 15%; animation-delay: 2s; }
+        .orb-3 { width: 180px; height: 180px; background: linear-gradient(45deg, #ffbe0b, #fb5607); bottom: 20%; left: 20%; animation-delay: 1s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .header {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .logo { font-size: 1.5rem; font-weight: bold; 
+            background: linear-gradient(45deg, #ff006e, #8338ec); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link { color: #ccc; text-decoration: none; transition: color 0.3s; }
+        .nav-link:hover, .nav-link.active { color: #ff006e; }
+        
+        .auth-buttons { display: flex; gap: 1rem; }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(45deg, #ff006e, #8338ec); color: white; }
+        .btn-secondary { background: transparent; color: white; border: 1px solid #666; }
+        .btn:hover { transform: scale(1.05); }
+        
+        .main-content { padding-top: 80px; min-height: 100vh; position: relative; z-index: 10; }
+        
+        .page { display: none; padding: 2rem; }
+        .page.active { display: block; }
+        
+        .survey-page { text-align: center; padding: 4rem 2rem; }
+        .survey-title { font-size: 3rem; margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
+            background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite; }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .survey-content { max-width: 800px; margin: 0 auto; 
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 3rem; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .option-card { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .option-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+        .option-card.selected { background: linear-gradient(45deg, rgba(255,0,110,0.2), rgba(131,56,236,0.2));
+            border-color: #ff006e; box-shadow: 0 0 30px rgba(255,0,110,0.3); }
+        
+        .option-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .option-label { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .option-desc { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        
+        .progress-bar { position: fixed; top: 0; left: 0; height: 4px; z-index: 200;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
+            width: 0%; transition: width 0.3s; }
+        
+        .home-hero { text-align: center; padding: 6rem 2rem; }
+        .hero-title { font-size: 4rem; margin-bottom: 2rem; }
+        .hero-subtitle { font-size: 1.5rem; color: #ccc; margin-bottom: 3rem; }
+        
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 4rem 2rem; }
+        .feature-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 2rem; text-align: center; }
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+        
+        .collaboration-demo { padding: 4rem 2rem; text-align: center; }
+        .demo-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 2rem; margin: 2rem auto; max-width: 600px; }
+        
+        .dashboard-content { padding: 2rem; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .dashboard-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 2rem; }
+        
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        .form-input { width: 100%; padding: 1rem; background: rgba(255,255,255,0.1); 
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; }
+        .form-input:focus { outline: none; border-color: #ff006e; }
+        
+        .hidden { display: none !important; }
+        .user-info { color: #ccc; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+        
+        <div class="progress-bar" id="progressBar"></div>
+        
+        <header class="header">
+            <div class="logo">NeuroBright</div>
+            <nav class="nav-links">
+                <a href="#" class="nav-link active" onclick="showPage('home')">Home</a>
+                <a href="#" class="nav-link" onclick="showPage('collaboration')">Collaboration</a>
+                <a href="#" class="nav-link" onclick="showPage('dashboard')" id="dashboardLink" style="display:none;">Dashboard</a>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-secondary" onclick="showPage('login')">Sign In</button>
+                <button class="btn btn-primary" onclick="showPage('signup')">Sign Up</button>
+            </div>
+            <div class="user-info hidden" id="userInfo">
+                <span id="userName">Welcome, User</span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <!-- Home Page -->
+            <div class="page active" id="home">
+                <div class="home-hero">
+                    <h1 class="hero-title survey-title">NeuroAdaptive EdTech</h1>
+                    <p class="hero-subtitle">Revolutionizing Learning with AI and Brain-Computer Interfaces</p>
+                    <button class="btn btn-primary" onclick="showPage('signup')" style="font-size: 1.2rem; padding: 1rem 2rem;">Get Started</button>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3>BCI Integration</h3>
+                        <p>Real-time brain monitoring for adaptive learning experiences</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3>Collaboration</h3>
+                        <p>Study together with AI-powered group sessions and quizzes</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Analytics</h3>
+                        <p>Detailed insights into your learning patterns and progress</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Survey Pages -->
+            <div class="page" id="survey">
+                <div class="survey-page">
+                    <div class="survey-content">
+                        <h2 class="survey-title">Who Are You?</h2>
+                        <p style="text-align: center; color: #ccc; margin-bottom: 3rem;">Help us understand your background</p>
+                        
+                        <div class="options-grid" id="surveyOptions">
+                            <div class="option-card" onclick="selectOption(this, 'student')">
+                                <div class="option-icon">🎓</div>
+                                <div class="option-label">Student</div>
+                                <div class="option-desc">Currently studying or in education</div>
+                            </div>
+                            <div class="option-card" onclick="selectOption(this, 'professional')">
+                                <div class="option-icon">💼</div>
+                                <div class="option-label">Professional</div>
+                                <div class="option-desc">Working in your field</div>
+                            </div>
+                            <div class="option-card" onclick="selectOption(this, 'researcher')">
+                                <div class="option-icon">🔬</div>
+                                <div class="option-label">Researcher</div>
+                                <div class="option-desc">Academic or industry researcher</div>
+                            </div>
+                            <div class="option-card" onclick="selectOption(this, 'educator')">
+                                <div class="option-icon">👨🏫</div>
+                                <div class="option-label">Educator</div>
+                                <div class="option-desc">Teacher or trainer</div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="nextSurveyPage()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Page -->
+            <div class="page" id="login">
+                <div class="survey-page">
+                    <div class="survey-content">
+                        <h2 class="survey-title">Welcome Back</h2>
+                        <p style="text-align: center; color: #ccc; margin-bottom: 3rem;">Sign in to continue your learning journey</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="loginEmail" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password">
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="login()" style="width: 100%; margin-bottom: 1rem;">Sign In</button>
+                            <p style="color: #ccc;">Don't have an account? <a href="#" onclick="showPage('signup')" style="color: #ff006e;">Sign up here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Signup Page -->
+            <div class="page" id="signup">
+                <div class="survey-page">
+                    <div class="survey-content">
+                        <h2 class="survey-title">Join NeuroBright</h2>
+                        <p style="text-align: center; color: #ccc; margin-bottom: 3rem;">Create your account and start learning</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" id="signupName" placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" id="signupEmail" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" id="signupPassword" placeholder="Create a password">
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="signup()" style="width: 100%; margin-bottom: 1rem;">Create Account</button>
+                            <p style="color: #ccc;">Already have an account? <a href="#" onclick="showPage('login')" style="color: #ff006e;">Sign in here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Collaboration Page -->
+            <div class="page" id="collaboration">
+                <div class="collaboration-demo">
+                    <h2 class="survey-title">Collaboration Nexus</h2>
+                    <p style="color: #ccc; margin-bottom: 3rem;">Study together with AI-powered sessions</p>
+                    
+                    <div class="demo-card">
+                        <h3 style="margin-bottom: 1rem;">🎯 Create Study Session</h3>
+                        <div class="form-group">
+                            <input type="text" class="form-input" id="sessionTopic" placeholder="Enter study topic (e.g., Machine Learning)">
+                        </div>
+                        <button class="btn btn-primary" onclick="createSession()">Create Session</button>
+                    </div>
+                    
+                    <div class="demo-card" id="sessionDemo" style="display: none;">
+                        <h3>📚 Active Session: <span id="currentTopic"></span></h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                            <div>
+                                <h4>👥 Participants</h4>
+                                <div id="participants">
+                                    <p>🎓 You (Host)</p>
+                                    <p>👨‍💻 AI Study Partner</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h4>🏆 Leaderboard</h4>
+                                <div id="leaderboard">
+                                    <p>1. You - 100 pts</p>
+                                    <p>2. AI Partner - 80 pts</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                            <h4>❓ Sample Quiz Question</h4>
+                            <p id="quizQuestion">What is the primary goal of machine learning?</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <button class="btn btn-secondary" onclick="answerQuiz(this)">Pattern Recognition</button>
+                                <button class="btn btn-secondary" onclick="answerQuiz(this)">Data Storage</button>
+                                <button class="btn btn-secondary" onclick="answerQuiz(this)">Network Security</button>
+                                <button class="btn btn-secondary" onclick="answerQuiz(this)">File Management</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Page -->
+            <div class="page" id="dashboard">
+                <div class="dashboard-content">
+                    <h2 class="survey-title">Personal Dashboard</h2>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>📊 Learning Progress</h3>
+                            <div style="margin: 1rem 0;">
+                                <p>Study Time: <strong>24 hours</strong></p>
+                                <p>Sessions Completed: <strong>12</strong></p>
+                                <p>Average Score: <strong>85%</strong></p>
+                            </div>
+                            <div style="background: rgba(255,0,110,0.2); height: 10px; border-radius: 5px; margin: 1rem 0;">
+                                <div style="background: linear-gradient(45deg, #ff006e, #8338ec); height: 100%; width: 75%; border-radius: 5px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>🧠 BCI Insights</h3>
+                            <p>Attention Level: <strong>High</strong></p>
+                            <p>Focus Duration: <strong>45 min avg</strong></p>
+                            <p>Optimal Study Time: <strong>Morning</strong></p>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>🎯 Recent Activities</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin: 0.5rem 0;">✅ Completed ML Quiz</li>
+                                <li style="margin: 0.5rem 0;">🤝 Joined Study Session</li>
+                                <li style="margin: 0.5rem 0;">📚 Read 3 Articles</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>🏆 Achievements</h3>
+                            <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                                <span style="font-size: 2rem;">🥇</span>
+                                <span style="font-size: 2rem;">🎓</span>
+                                <span style="font-size: 2rem;">⭐</span>
+                            </div>
+                            <p>Quiz Master, Study Streak, Top Collaborator</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let surveyData = {};
+        let currentSurveyPage = 1;
+        
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            document.querySelector(`[onclick="showPage('${pageId}')"]`)?.classList.add('active');
+            
+            if (pageId === 'signup' && !currentUser) {
+                setTimeout(() => showPage('survey'), 100);
+            }
+        }
+        
+        function selectOption(element, value) {
+            document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            surveyData.userType = value;
+        }
+        
+        function nextSurveyPage() {
+            if (!surveyData.userType) {
+                alert('Please select an option first!');
+                return;
+            }
+            
+            currentSurveyPage++;
+            updateProgressBar();
+            
+            if (currentSurveyPage > 6) {
+                completeSurvey();
+            } else {
+                loadSurveyPage();
+            }
+        }
+        
+        function updateProgressBar() {
+            document.getElementById('progressBar').style.width = `${(currentSurveyPage / 6) * 100}%`;
+        }
+        
+        function loadSurveyPage() {
+            const content = document.querySelector('#survey .survey-content');
+            const pages = {
+                2: `<h2 class="survey-title">Your Profession</h2>
+                    <div class="form-group"><input type="text" class="form-input" placeholder="e.g., Software Engineer" onchange="surveyData.profession = this.value"></div>
+                    <button class="btn btn-primary" onclick="nextSurveyPage()">Next →</button>`,
+                3: `<h2 class="survey-title">Experience Level</h2>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this, 'beginner'); surveyData.experience = 'beginner'"><div class="option-label">Beginner</div></div>
+                        <div class="option-card" onclick="selectOption(this, 'intermediate'); surveyData.experience = 'intermediate'"><div class="option-label">Intermediate</div></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="nextSurveyPage()">Next →</button>`,
+                4: `<h2 class="survey-title">Learning Goals</h2>
+                    <div class="form-group"><input type="text" class="form-input" placeholder="What do you want to achieve?" onchange="surveyData.goals = this.value"></div>
+                    <button class="btn btn-primary" onclick="nextSurveyPage()">Next →</button>`,
+                5: `<h2 class="survey-title">Learning Style</h2>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this, 'visual'); surveyData.learningStyle = 'visual'"><div class="option-icon">👁️</div><div class="option-label">Visual</div></div>
+                        <div class="option-card" onclick="selectOption(this, 'auditory'); surveyData.learningStyle = 'auditory'"><div class="option-icon">🎧</div><div class="option-label">Auditory</div></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="nextSurveyPage()">Next →</button>`,
+                6: `<h2 class="survey-title">Final Step</h2>
+                    <div class="form-group"><textarea class="form-input" placeholder="What motivates you to learn?" onchange="surveyData.motivation = this.value" style="height: 100px;"></textarea></div>
+                    <button class="btn btn-primary" onclick="completeSurvey()">Complete Survey 🎉</button>`
+            };
+            content.innerHTML = pages[currentSurveyPage];
+        }
+        
+        function completeSurvey() {
+            alert('🎉 Survey Complete! Welcome to NeuroAdaptive EdTech!');
+            currentUser = { name: 'New User', email: 'user@example.com' };
+            updateAuthState();
+            showPage('dashboard');
+        }
+        
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                currentUser = { name: email.split('@')[0], email: email };
+                updateAuthState();
+                showPage('dashboard');
+                alert('✅ Login successful!');
+            } else {
+                alert('Please fill in all fields');
+            }
+        }
+        
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (name && email && password) {
+                showPage('survey');
+                alert('📝 Please complete the survey to personalize your experience');
+            } else {
+                alert('Please fill in all fields');
+            }
+        }
+        
+        function logout() {
+            currentUser = null;
+            updateAuthState();
+            showPage('home');
+        }
+        
+        function updateAuthState() {
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const dashboardLink = document.getElementById('dashboardLink');
+            const userName = document.getElementById('userName');
+            
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                userInfo.classList.remove('hidden');
+                dashboardLink.style.display = 'block';
+                userName.textContent = `Welcome, ${currentUser.name}`;
+            } else {
+                authButtons.classList.remove('hidden');
+                userInfo.classList.add('hidden');
+                dashboardLink.style.display = 'none';
+            }
+        }
+        
+        function createSession() {
+            const topic = document.getElementById('sessionTopic').value;
+            if (topic) {
+                document.getElementById('currentTopic').textContent = topic;
+                document.getElementById('sessionDemo').style.display = 'block';
+                document.getElementById('quizQuestion').textContent = `What is a key concept in ${topic}?`;
+                alert('🎉 Session created! Invite others with the link: neurobright.ai/session/abc123');
+            }
+        }
+        
+        function answerQuiz(button) {
+            document.querySelectorAll('#sessionDemo .btn-secondary').forEach(btn => {
+                btn.style.background = 'rgba(255,255,255,0.1)';
+            });
+            button.style.background = 'linear-gradient(45deg, #ff006e, #8338ec)';
+            setTimeout(() => {
+                alert('✅ Correct! +10 points');
+            }, 500);
+        }
+        
+        // Initialize app
+        updateAuthState();
+    </script>
+</body>
+</html>

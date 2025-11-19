@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAdaptive EdTech - Survey Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; }
+        
+        .survey-container {
+            min-height: 100vh;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .orb-1 { width: 200px; height: 200px; background: linear-gradient(45deg, #ff006e, #8338ec); top: 10%; left: 10%; animation-delay: 0s; }
+        .orb-2 { width: 150px; height: 150px; background: linear-gradient(45deg, #3a86ff, #06ffa5); top: 60%; right: 15%; animation-delay: 2s; }
+        .orb-3 { width: 180px; height: 180px; background: linear-gradient(45deg, #ffbe0b, #fb5607); top: 20%; right: 20%; animation-delay: 1s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .survey-content {
+            max-width: 800px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 50px auto;
+        }
+
+        .survey-title {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .survey-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(45deg, rgba(255, 0, 110, 0.2), rgba(131, 56, 236, 0.2));
+            border-color: #ff006e;
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+        }
+
+        .option-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .option-label {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin: 20px;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
+            width: 16.67%;
+            transition: width 0.3s ease;
+            z-index: 30;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <div class="progress-bar"></div>
+        
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+        
+        <div class="survey-content">
+            <h2 class="survey-title">Who Are You?</h2>
+            <p class="survey-subtitle">Help us understand your background</p>
+            
+            <div class="options-grid">
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">🎓</div>
+                    <div class="option-label">Student</div>
+                    <div class="option-desc">Currently studying or in education</div>
+                </div>
+                
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">💼</div>
+                    <div class="option-label">Professional</div>
+                    <div class="option-desc">Working in your field</div>
+                </div>
+                
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">🔬</div>
+                    <div class="option-label">Researcher</div>
+                    <div class="option-desc">Academic or industry researcher</div>
+                </div>
+                
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">👨🏫</div>
+                    <div class="option-label">Educator</div>
+                    <div class="option-desc">Teacher or trainer</div>
+                </div>
+                
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">🚀</div>
+                    <div class="option-label">Entrepreneur</div>
+                    <div class="option-desc">Building your own venture</div>
+                </div>
+                
+                <div class="option-card" onclick="selectOption(this)">
+                    <div class="option-icon">🌟</div>
+                    <div class="option-label">Other</div>
+                    <div class="option-desc">Something else entirely</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="nav-btn" onclick="nextPage()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let selectedOption = null;
+
+        function selectOption(element) {
+            // Remove selected class from all options
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            selectedOption = element.querySelector('.option-label').textContent;
+        }
+
+        function nextPage() {
+            if (!selectedOption) {
+                alert('Please select an option first!');
+                return;
+            }
+            
+            currentPage++;
+            updateProgressBar();
+            
+            if (currentPage <= 6) {
+                loadNextPage();
+            } else {
+                showCompletion();
+            }
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${(currentPage / 6) * 100}%`;
+        }
+
+        function loadNextPage() {
+            const content = document.querySelector('.survey-content');
+            
+            const pages = {
+                2: `
+                    <h2 class="survey-title">Your Professional Domain</h2>
+                    <p class="survey-subtitle">What's your area of expertise?</p>
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; font-size: 1.1rem; margin-bottom: 1rem;">Current Profession/Field</label>
+                        <input type="text" placeholder="e.g., Software Engineer, Data Scientist..." 
+                               style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 1rem;">
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="nav-btn" onclick="nextPage()">Next →</button>
+                    </div>
+                `,
+                3: `
+                    <h2 class="survey-title">Experience & Aspirations</h2>
+                    <p class="survey-subtitle">Where are you in your journey?</p>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-label">Beginner</div>
+                            <div class="option-desc">0-2 years</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-label">Intermediate</div>
+                            <div class="option-desc">2-5 years</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-label">Advanced</div>
+                            <div class="option-desc">5-10 years</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-label">Expert</div>
+                            <div class="option-desc">10+ years</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="nav-btn" onclick="nextPage()">Next →</button>
+                    </div>
+                `,
+                4: `
+                    <h2 class="survey-title">Interests & Challenges</h2>
+                    <p class="survey-subtitle">What excites and challenges you?</p>
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; font-size: 1.1rem; margin-bottom: 1rem;">Areas of Interest</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem;">
+                            <span class="skill-tag" onclick="toggleTag(this)">Artificial Intelligence</span>
+                            <span class="skill-tag" onclick="toggleTag(this)">Machine Learning</span>
+                            <span class="skill-tag" onclick="toggleTag(this)">Data Science</span>
+                            <span class="skill-tag" onclick="toggleTag(this)">Web Development</span>
+                            <span class="skill-tag" onclick="toggleTag(this)">Blockchain</span>
+                            <span class="skill-tag" onclick="toggleTag(this)">Cybersecurity</span>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="nav-btn" onclick="nextPage()">Next →</button>
+                    </div>
+                `,
+                5: `
+                    <h2 class="survey-title">Learning Preferences</h2>
+                    <p class="survey-subtitle">How do you learn best?</p>
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-icon">👁️</div>
+                            <div class="option-label">Visual</div>
+                            <div class="option-desc">Charts, diagrams, videos</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-icon">🎧</div>
+                            <div class="option-label">Auditory</div>
+                            <div class="option-desc">Lectures, discussions, podcasts</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-icon">✋</div>
+                            <div class="option-label">Hands-on</div>
+                            <div class="option-desc">Practice, experiments, building</div>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this)">
+                            <div class="option-icon">📚</div>
+                            <div class="option-label">Reading</div>
+                            <div class="option-desc">Text, notes, documentation</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="nav-btn" onclick="nextPage()">Next →</button>
+                    </div>
+                `,
+                6: `
+                    <h2 class="survey-title">Final Touch</h2>
+                    <p class="survey-subtitle">What drives your learning journey?</p>
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; font-size: 1.1rem; margin-bottom: 1rem;">What motivates you most?</label>
+                        <textarea placeholder="Share what inspires you to learn and grow..." 
+                                  style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 1rem; resize: vertical; height: 120px;"></textarea>
+                    </div>
+                    <div style="text-align: center; background: linear-gradient(45deg, rgba(255,0,110,0.1), rgba(131,56,236,0.1)); border: 2px solid rgba(255,0,110,0.3); border-radius: 20px; padding: 2rem; margin-bottom: 2rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+                        <h3 style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem; color: #ff006e;">Ready to Begin!</h3>
+                        <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">Your personalized learning experience awaits.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="nav-btn" onclick="completeSurvey()">Complete Survey 🎉</button>
+                    </div>
+                `
+            };
+            
+            content.innerHTML = pages[currentPage];
+            selectedOption = null;
+        }
+
+        function toggleTag(element) {
+            element.style.background = element.style.background ? '' : 'linear-gradient(45deg, #8338ec, #ff006e)';
+        }
+
+        function completeSurvey() {
+            alert('🎉 Survey Complete! Welcome to NeuroAdaptive EdTech!');
+        }
+
+        // Add CSS for skill tags
+        const style = document.createElement('style');
+        style.textContent = `
+            .skill-tag {
+                padding: 0.8rem 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                border-radius: 25px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+                display: inline-block;
+            }
+            .skill-tag:hover {
+                transform: scale(1.05);
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
