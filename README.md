@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 Neuroadaptive EdTech: A NALLAS HACKATHON Submission
 Live Demo: [Link to your Vercel deployment]
 
@@ -90,5 +88,3 @@ Add your API_KEY as an environment variable in the Vercel project settings.
 Click Deploy. Vercel will automatically use the vercel.json file to build and deploy the application. =======
 NeuroBright
 NeuroAdaptive Learning Platform
-
-b9e13712782b272632ccb8c80eda372c7bc0cd46
