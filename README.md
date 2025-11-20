@@ -12,30 +12,19 @@ NeuroBright is a web-based prototype that simulates a neuroadaptive learning env
 When the platform detects a drop in focus (a simulated "Drowsy" state), it intervenes with targeted activities designed to re-engage the learner, such as an immersive VR mini-game or a timed break. This creates a dynamic feedback loop between the user's mind and the educational content.
 
 Key Features
-🧠 BCI State Simulation: To demonstrate the core concept without requiring a physical BCI, the application simulates a real-time EEG data stream. It cycles through 'Focused,' 'Neutral,' and 'Drowsy' states during a learning session, providing a realistic foundation for triggering interventions.
+ BCI State Simulation: To demonstrate the core concept without requiring a physical BCI, the application simulates a real-time EEG data stream. It cycles through 'Focused,' 'Neutral,' and 'Drowsy' states during a learning session, providing a realistic foundation for triggering interventions.
 
-🤖 AI-Driven Content Generation: The platform leverages the Google Gemini API to generate course outlines, quizzes, and even educational comics on the fly. This ensures that content is fresh, personalized, and can be adapted to any topic the user wishes to learn.
+ AI-Driven Content Generation: The platform leverages the Google Gemini API to generate course outlines, quizzes, and even educational comics on the fly. This ensures that content is fresh, personalized, and can be adapted to any topic the user wishes to learn.
 
-⚡ Adaptive Interventions: When the simulated BCI detects a "Drowsy" state, a modal appears, prompting the user with a choice of activities to restore focus. This includes launching a VR game, taking a timed break, or viewing a competitive leaderboard.
+ Adaptive Interventions: When the simulated BCI detects a "Drowsy" state, a modal appears, prompting the user with a choice of activities to restore focus. This includes launching a VR game, taking a timed break, or viewing a competitive leaderboard.
 
-🎮 Interactive VR Mini-Game: Built with Three.js and the WebXR API, this immersive VR target-shooting game serves as a "subconscious coaching" tool. It's a fun, fast-paced activity designed to quickly re-engage the user's attention and pull them out of a drowsy state.
+ Interactive VR Mini-Game: Built with Three.js and the WebXR API, this immersive VR target-shooting game serves as a "subconscious coaching" tool. It's a fun, fast-paced activity designed to quickly re-engage the user's attention and pull them out of a drowsy state.
 
-📚 Optimized & Pre-packaged Content: To guarantee a seamless and fast demonstration, the prototype includes a comprehensive, pre-packaged course on "Optics." This module loads instantly from local data, bypassing API calls while still showcasing the full range of learning modes (Static Text, Video, 3D Visuals, and dynamic Comics).
+ Optimized & Pre-packaged Content: To guarantee a seamless and fast demonstration, the prototype includes a comprehensive, pre-packaged course on "Optics." This module loads instantly from local data, bypassing API calls while still showcasing the full range of learning modes (Static Text, Video, 3D Visuals, and dynamic Comics).
 
 Data & Intervention Flow Diagram
 This diagram illustrates the flow of data from the simulated BCI to the user-facing intervention.
 
-graph TD
-    A[User Starts Learning Module] --> B{BCI Simulator};
-    B --> C{State Detection};
-    C -- 'Focused' / 'Neutral' --> D[Continue Learning];
-    C -- 'Drowsy' --> E[Trigger Intervention Modal];
-    E --> F[User Selects VR Game];
-    F --> G[Launch WebXR Experience];
-    E --> H[User Selects Break];
-    H --> I[Show Break Timer];
-    G --> A;
-    I --> A;
 3. Technology Stack
 Frontend: React, Vite, TypeScript, Tailwind CSS
 3D/VR: Three.js, WebXR
